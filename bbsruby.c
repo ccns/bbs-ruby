@@ -159,24 +159,27 @@ VALUE brb_kbhit(VALUE self, VALUE wait)
         return INT2NUM(0);
 }
 
-void brb_outs(VALUE self, VALUE args)
+VALUE brb_outs(VALUE self, VALUE args)
 {
     int i, count = RARRAY_LEN(args);
     for (i=0; i<count; i++)
     {
         outs(StringValueCStr(RARRAY_PTR(args)[i]));
     }
+    return Qnil;
 }
 
-void brb_title(VALUE self, VALUE msg)
+VALUE brb_title(VALUE self, VALUE msg)
 {
     vs_bar(StringValueCStr(msg));
+    return Qnil;
 }
 
-void brb_print(VALUE self, VALUE args)
+VALUE brb_print(VALUE self, VALUE args)
 {
     brb_outs(self, args);
     outs("\n");
+    return Qnil;
 }
 
 VALUE brb_getmaxyx(VALUE self)
@@ -197,21 +200,22 @@ VALUE brb_getyx(VALUE self)
     return rethash;
 }
 
-void brb_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(x), NUM2INT(y)); }
-void brb_moverel(VALUE self, VALUE dy, VALUE dx) {
+VALUE brb_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(x), NUM2INT(y)); return Qnil; }
+VALUE brb_moverel(VALUE self, VALUE dy, VALUE dx) {
     int cur_row, cur_col;
     getxy(&cur_col, &cur_row);
     move(cur_col + dx, cur_row + dy);
+    return Qnil;
 }
 
-void brb_clear(VALUE self) { clear(); }
+VALUE brb_clear(VALUE self) { clear(); return Qnil; }
 
-void brb_clrtoeol(VALUE self) { clrtoeol(); }
-void brb_clrtobot(VALUE self) { clrtobot(); }
+VALUE brb_clrtoeol(VALUE self) { clrtoeol(); return Qnil; }
+VALUE brb_clrtobot(VALUE self) { clrtobot(); return Qnil; }
 
-void brb_refresh(VALUE self) { refresh(); }
+VALUE brb_refresh(VALUE self) { refresh(); return Qnil; }
 
-void brb_vmsg(VALUE self, VALUE msg) { vmsg(StringValueCStr(msg)); }
+VALUE brb_vmsg(VALUE self, VALUE msg) { vmsg(StringValueCStr(msg)); return Qnil; }
 
 VALUE brb_name(VALUE self) { return rb_str_new_cstr(BBSNAME); }
 VALUE brb_interface(VALUE self) { return rb_float_new(BBSRUBY_INTERFACE_VER); }
@@ -258,6 +262,7 @@ VALUE brb_color(VALUE self, VALUE args)
     VALUE arr = rb_ary_new();
     rb_ary_push(arr, str);
     brb_outs(self, arr);
+    return Qnil;
 }
 
 VALUE brb_userid(VALUE self)
