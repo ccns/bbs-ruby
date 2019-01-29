@@ -135,7 +135,7 @@ VALUE bbs_kbhit(VALUE self, VALUE wait)
 void bbs_outs(VALUE self, VALUE args)
 {
     int i, count = RARRAY(args)->len;
-    for (i=0;i<count;i++)
+    for (i=0; i<count; i++)
     {
         outs(STR2CSTR(rb_ary_entry(args, i)));
     }
@@ -197,7 +197,7 @@ VALUE bbs_ansi_color(VALUE self, VALUE args)
     int count = RARRAY(args)->len;
     char sep[2] = ";";
     int i;
-    for (i=0;i<count;i++)
+    for (i=0; i<count; i++)
     {
         int ansi = NUM2INT(rb_ary_entry(args, i));
         sprintf(p, "%d%s", ansi, (i == count - 1) ? "" : sep);
@@ -447,7 +447,7 @@ int ruby_script_range_detect(char **pStart, char **pEnd)
 
             // Possible TOC item, check patterns
             int i;
-            for (i=0;i<BBSRUBY_TOC_HEADERS;i++)
+            for (i=0; i<BBSRUBY_TOC_HEADERS; i++)
             {
                 char preBuf[100];
                 sprintf(preBuf, "%s:", TOCs_HEADER[i]);
@@ -493,7 +493,7 @@ void print_exception()
     outs("\n");
     /*VALUE ary = rb_funcall(rb_errinfo, rb_intern("backtrace"), 0);
     int c;
-    for (c=0;c < RARRAY(ary)->len;c++)
+    for (c=0; c < RARRAY(ary)->len; c++)
     {
         outs("  from: ");
         outs(STR2CSTR(RARRAY(ary)->ptr[c]));
@@ -516,7 +516,7 @@ void run_ruby(fpath)
     ABORT_BBSRUBY = 0;
 
     int sig;
-    for (sig=0;sig<31;sig++)
+    for (sig=0; sig<31; sig++)
         signal(sig, sig_handler);
 
     // Initalize Ruby interpreter first.
@@ -597,7 +597,7 @@ void run_ruby(fpath)
         sprintf(msgBuf, "\033[1;41m ● 程式版本過舊，可能發生不相容問題");
     outs(msgBuf);
     int i;
-    for (i=0;i<b_cols - strlen(msgBuf) + 7;i++)
+    for (i=0; i<b_cols - strlen(msgBuf) + 7; i++)
         outs(" ");
     outs("\033[m");
     */
