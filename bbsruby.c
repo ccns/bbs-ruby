@@ -1,11 +1,11 @@
 //-------------------------------------------------------
-// BBSRuby.c				 
+// BBSRuby.c
 //-------------------------------------------------------
-// target : Ruby script support for BBS 			
-// author : Zero <itszero at gmail.com> 
+// target : Ruby script support for BBS
+// author : Zero <itszero at gmail.com>
 // Version: 0.2
-// create : 2007/01/08					 
-// update : 2007/01/08	
+// create : 2007/01/08
+// update : 2007/01/08
 // This program is licensed under MIT License.
 //-------------------------------------------------------
 
@@ -104,13 +104,13 @@ VALUE bbs_getdata(VALUE self, VALUE args)
 	int echo = DOECHO;
 	if (count > 1 && NUM2INT(rb_ary_entry(args, 1)) == 0)
 		echo = NOECHO;
-	
+
 	int maxsize = NUM2INT(rb_ary_entry(args, 0));
 	if (maxsize > 511) maxsize = 511;
 	char data[512] = "";
 	int cur_row, cur_col;
 	getxy(&cur_col, &cur_row);
-	
+
 	vget(cur_col, cur_row, "", data, maxsize, echo);
 
 	return rb_str_new2(data);
@@ -119,7 +119,7 @@ VALUE bbs_getdata(VALUE self, VALUE args)
 VALUE bbs_kbhit(VALUE self, VALUE wait)
 {
 	double data = NUM2DBL(wait);
-	
+
 	if (data < KBHIT_TMIN) data = KBHIT_TMIN;
 	if (data > KBHIT_TMAX) data = KBHIT_TMAX;
 
@@ -171,10 +171,10 @@ VALUE bbs_getyx(VALUE self)
 }
 
 void bbs_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(x), NUM2INT(y)); }
-void bbs_moverel(VALUE self, VALUE dy, VALUE dx) { 
+void bbs_moverel(VALUE self, VALUE dy, VALUE dx) {
 	int cur_row, cur_col;
 	getxy(&cur_col, &cur_row);
-	move(cur_col + dx, cur_row + dy); 
+	move(cur_col + dx, cur_row + dy);
 }
 
 void bbs_clear(VALUE self) { clear(); }
@@ -205,7 +205,7 @@ VALUE bbs_ansi_color(VALUE self, VALUE args)
 	}
 
 	*p++ = 'm'; *p = '\0';
-	
+
 	return rb_str_new2(buf);
 }
 
@@ -302,9 +302,9 @@ int getkey(double wait)
 {
 	int fd;
 	struct timeval tv;
-	
+
 	fd = 1;
-	
+
 	tv.tv_sec = (int)wait;
 	wait-=(int)wait;
 	tv.tv_usec = wait * 1000000;
@@ -381,7 +381,7 @@ void ruby_script_detach(char *p, int len)
 int ruby_script_range_detect(char **pStart, char **pEnd)
 {
 	int lenSignature = strlen(BBSRUBY_SIGNATURE);
-	
+
 	// Search range
 	char *cStart, *cEnd;
 	cStart = *pStart;
@@ -399,7 +399,7 @@ int ruby_script_range_detect(char **pStart, char **pEnd)
 
 	if (cStart + lenSignature >= *pEnd) // Cannot found signature.
 		return 0;
-	
+
 	*pStart = cStart;
 
 	// Find the tail signature
@@ -433,7 +433,7 @@ int ruby_script_range_detect(char **pStart, char **pEnd)
 
 	// Create TOC class wrapping these information
 	char *tStart, *tEnd;
-	tStart = cStart;	
+	tStart = cStart;
 	VALUE hashTOC = rb_hash_new();
 	int TOCfound = 0;
 	// In this implement, we only allowd TOC be put BEFORE the actual script code
@@ -514,7 +514,7 @@ void run_ruby(fpath)
 {
 	static int ruby_inited = 0;
 	ABORT_BBSRUBY = 0;
-	
+
 	int sig;
 	for(sig=0;sig<31;sig++)
 		signal(sig, sig_handler);
@@ -526,7 +526,7 @@ void run_ruby(fpath)
 		ruby_init();
 		ruby_init_loadpath();
 		ruby_inited = 1;
-	
+
 		// Prepare BBS wrapper class
 		VALUE rb_cBBS = rb_define_class("BBS", rb_cObject);
 		rb_define_singleton_method(rb_cBBS, "outs", bbs_outs, -2);
@@ -612,7 +612,7 @@ void run_ruby(fpath)
 	//KB_QUEUE = rb_ary_new();
 	NODE* root = rb_compile_string("BBSRuby", rb_str_new2(cpBuf), 1);
 	error = ruby_exec_node(root, "BBSRuby");
-	
+
 	if (error == 0 || ABORT_BBSRUBY)
 		out_footer(ABORT_BBSRUBY ? " (使用者中斷)" : " (程式結束)", "按任意鍵返回");
 	else
