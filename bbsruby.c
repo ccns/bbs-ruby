@@ -55,7 +55,7 @@ VALUE KB_QUEUE;
 int getkey(double wait);
 
 /* BBS helper class : following BBSLua SDK */
-VALUE bbs_keyToString(int key)
+VALUE brb_keyToString(int key)
 {
     if (key == Ctrl('C')) // System-wide Abort
         ABORT_BBSRUBY = 1;
@@ -104,7 +104,7 @@ VALUE bbs_keyToString(int key)
     }
 }
 
-VALUE bbs_clock(VALUE self)
+VALUE brb_clock(VALUE self)
 {
     struct timeval tv;
     struct timezone tz;
@@ -115,16 +115,16 @@ VALUE bbs_clock(VALUE self)
     return rb_float_new(d);
 }
 
-VALUE bbs_getch(VALUE self)
+VALUE brb_getch(VALUE self)
 {
     //if (RARRAY_LEN(KB_QUEUE) == 0)
         int c = vkey();
-        return bbs_keyToString(c);
+        return brb_keyToString(c);
     //else
         //return rb_ary_pop(KB_QUEUE);
 }
 
-VALUE bbs_getdata(VALUE self, VALUE args)
+VALUE brb_getdata(VALUE self, VALUE args)
 {
     int count = RARRAY_LEN(args);
     int echo = DOECHO;
@@ -142,7 +142,7 @@ VALUE bbs_getdata(VALUE self, VALUE args)
     return rb_str_new2(data);
 }
 
-VALUE bbs_kbhit(VALUE self, VALUE wait)
+VALUE brb_kbhit(VALUE self, VALUE wait)
 {
     double data = NUM2DBL(wait);
 
@@ -151,14 +151,14 @@ VALUE bbs_kbhit(VALUE self, VALUE wait)
 
     if (getkey(data) != 0)
     {
-        //rb_ary_push(KB_QUEUE, bbs_keyToString(data));
+        //rb_ary_push(KB_QUEUE, brb_keyToString(data));
         return INT2NUM(1);
     }
     else
         return INT2NUM(0);
 }
 
-void bbs_outs(VALUE self, VALUE args)
+void brb_outs(VALUE self, VALUE args)
 {
     int i, count = RARRAY_LEN(args);
     for (i=0; i<count; i++)
@@ -167,18 +167,18 @@ void bbs_outs(VALUE self, VALUE args)
     }
 }
 
-void bbs_title(VALUE self, VALUE msg)
+void brb_title(VALUE self, VALUE msg)
 {
     vs_bar(StringValueCStr(msg));
 }
 
-void bbs_print(VALUE self, VALUE args)
+void brb_print(VALUE self, VALUE args)
 {
-    bbs_outs(self, args);
+    brb_outs(self, args);
     outs("\n");
 }
 
-VALUE bbs_getmaxyx(VALUE self)
+VALUE brb_getmaxyx(VALUE self)
 {
     VALUE rethash = rb_hash_new();
     rb_hash_aset(rethash, rb_str_new2("x"), INT2NUM(b_lines + 1));
@@ -186,7 +186,7 @@ VALUE bbs_getmaxyx(VALUE self)
     return rethash;
 }
 
-VALUE bbs_getyx(VALUE self)
+VALUE brb_getyx(VALUE self)
 {
     VALUE rethash = rb_hash_new();
     int cur_row, cur_col;
@@ -196,26 +196,26 @@ VALUE bbs_getyx(VALUE self)
     return rethash;
 }
 
-void bbs_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(x), NUM2INT(y)); }
-void bbs_moverel(VALUE self, VALUE dy, VALUE dx) {
+void brb_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(x), NUM2INT(y)); }
+void brb_moverel(VALUE self, VALUE dy, VALUE dx) {
     int cur_row, cur_col;
     getxy(&cur_col, &cur_row);
     move(cur_col + dx, cur_row + dy);
 }
 
-void bbs_clear(VALUE self) { clear(); }
+void brb_clear(VALUE self) { clear(); }
 
-void bbs_clrtoeol(VALUE self) { clrtoeol(); }
-void bbs_clrtobot(VALUE self) { clrtobot(); }
+void brb_clrtoeol(VALUE self) { clrtoeol(); }
+void brb_clrtobot(VALUE self) { clrtobot(); }
 
-void bbs_refresh(VALUE self) { refresh(); }
+void brb_refresh(VALUE self) { refresh(); }
 
-void bbs_vmsg(VALUE self, VALUE msg) { vmsg(StringValueCStr(msg)); }
+void brb_vmsg(VALUE self, VALUE msg) { vmsg(StringValueCStr(msg)); }
 
-VALUE bbs_name(VALUE self) { return rb_str_new2(BBSNAME); }
-VALUE bbs_interface(VALUE self) { return rb_float_new(BBSRUBY_INTERFACE_VER); }
+VALUE brb_name(VALUE self) { return rb_str_new2(BBSNAME); }
+VALUE brb_interface(VALUE self) { return rb_float_new(BBSRUBY_INTERFACE_VER); }
 
-VALUE bbs_ansi_color(VALUE self, VALUE args)
+VALUE brb_ansi_color(VALUE self, VALUE args)
 {
     char buf[50] = "\033[";
     char *p = buf + strlen(buf);
@@ -235,36 +235,36 @@ VALUE bbs_ansi_color(VALUE self, VALUE args)
     return rb_str_new2(buf);
 }
 
-VALUE bbs_ansi_reset(VALUE self)
+VALUE brb_ansi_reset(VALUE self)
 {
     return rb_str_new2("\033[m");
 }
 
-VALUE bbs_esc(VALUE self)
+VALUE brb_esc(VALUE self)
 {
     return rb_str_new2("\033");
 }
 
-VALUE bbs_color(VALUE self, VALUE args)
+VALUE brb_color(VALUE self, VALUE args)
 {
     int count = RARRAY_LEN(args);
     VALUE str;
     if (count == 0)
-        str = bbs_ansi_reset(self);
+        str = brb_ansi_reset(self);
     else
-        str = bbs_ansi_color(self, args);
+        str = brb_ansi_color(self, args);
 
     VALUE arr = rb_ary_new();
     rb_ary_push(arr, str);
-    bbs_outs(self, arr);
+    brb_outs(self, arr);
 }
 
-VALUE bbs_userid(VALUE self)
+VALUE brb_userid(VALUE self)
 {
     return rb_str_new2(cuser.userid);
 }
 
-VALUE bbs_pause(VALUE self, VALUE msg)
+VALUE brb_pause(VALUE self, VALUE msg)
 {
     char buf[200];
     move(b_lines, 0);
@@ -289,10 +289,10 @@ VALUE bbs_pause(VALUE self, VALUE msg)
     move(b_lines, 0);
     clrtoeol();
 
-    return bbs_keyToString(k);
+    return brb_keyToString(k);
 }
 
-VALUE bbs_toc(VALUE self)
+VALUE brb_toc(VALUE self)
 {
     return TOCs_rubyhash;
 }
@@ -566,31 +566,31 @@ void run_ruby(
 
         // Prepare BBS wrapper class
         VALUE rb_cBBS = rb_define_class("BBS", rb_cObject);
-        rb_define_singleton_method(rb_cBBS, "outs", bbs_outs, -2);
-        rb_define_singleton_method(rb_cBBS, "title", bbs_title, 1);
-        rb_define_singleton_method(rb_cBBS, "print", bbs_print, -2);
-        rb_define_singleton_method(rb_cBBS, "getyx", bbs_getyx, 0);
-        rb_define_singleton_method(rb_cBBS, "getmaxyx", bbs_getmaxyx, 0);
-        rb_define_singleton_method(rb_cBBS, "move", bbs_move, 2);
-        rb_define_singleton_method(rb_cBBS, "moverel", bbs_moverel, 2);
-        rb_define_singleton_method(rb_cBBS, "clear", bbs_clear, 0);
-        rb_define_singleton_method(rb_cBBS, "clrtoeol", bbs_clrtoeol, 0);
-        rb_define_singleton_method(rb_cBBS, "clrtobot", bbs_clrtobot, 0);
-        rb_define_singleton_method(rb_cBBS, "refresh", bbs_refresh, 0);
-        rb_define_singleton_method(rb_cBBS, "vmsg", bbs_vmsg, 1);
-        rb_define_singleton_method(rb_cBBS, "pause", bbs_pause, 1);
-        rb_define_singleton_method(rb_cBBS, "sitename", bbs_name, 0);
-        rb_define_singleton_method(rb_cBBS, "interface", bbs_interface, 0);
-        rb_define_singleton_method(rb_cBBS, "toc", bbs_toc, 0);
-        rb_define_singleton_method(rb_cBBS, "ansi_color", bbs_ansi_color, -2);
-        rb_define_singleton_method(rb_cBBS, "color", bbs_color, -2);
-        rb_define_singleton_method(rb_cBBS, "ANSI_RESET", bbs_ansi_reset, 0);
-        rb_define_singleton_method(rb_cBBS, "ESC", bbs_esc, 0);
-        rb_define_singleton_method(rb_cBBS, "userid", bbs_userid, 0);
-        rb_define_singleton_method(rb_cBBS, "getdata", bbs_getdata, -2);
-        rb_define_singleton_method(rb_cBBS, "clock", bbs_clock, 0);
-        rb_define_singleton_method(rb_cBBS, "getch", bbs_getch, 0);
-        rb_define_singleton_method(rb_cBBS, "kbhit", bbs_kbhit, 1);
+        rb_define_singleton_method(rb_cBBS, "outs", brb_outs, -2);
+        rb_define_singleton_method(rb_cBBS, "title", brb_title, 1);
+        rb_define_singleton_method(rb_cBBS, "print", brb_print, -2);
+        rb_define_singleton_method(rb_cBBS, "getyx", brb_getyx, 0);
+        rb_define_singleton_method(rb_cBBS, "getmaxyx", brb_getmaxyx, 0);
+        rb_define_singleton_method(rb_cBBS, "move", brb_move, 2);
+        rb_define_singleton_method(rb_cBBS, "moverel", brb_moverel, 2);
+        rb_define_singleton_method(rb_cBBS, "clear", brb_clear, 0);
+        rb_define_singleton_method(rb_cBBS, "clrtoeol", brb_clrtoeol, 0);
+        rb_define_singleton_method(rb_cBBS, "clrtobot", brb_clrtobot, 0);
+        rb_define_singleton_method(rb_cBBS, "refresh", brb_refresh, 0);
+        rb_define_singleton_method(rb_cBBS, "vmsg", brb_vmsg, 1);
+        rb_define_singleton_method(rb_cBBS, "pause", brb_pause, 1);
+        rb_define_singleton_method(rb_cBBS, "sitename", brb_name, 0);
+        rb_define_singleton_method(rb_cBBS, "interface", brb_interface, 0);
+        rb_define_singleton_method(rb_cBBS, "toc", brb_toc, 0);
+        rb_define_singleton_method(rb_cBBS, "ansi_color", brb_ansi_color, -2);
+        rb_define_singleton_method(rb_cBBS, "color", brb_color, -2);
+        rb_define_singleton_method(rb_cBBS, "ANSI_RESET", brb_ansi_reset, 0);
+        rb_define_singleton_method(rb_cBBS, "ESC", brb_esc, 0);
+        rb_define_singleton_method(rb_cBBS, "userid", brb_userid, 0);
+        rb_define_singleton_method(rb_cBBS, "getdata", brb_getdata, -2);
+        rb_define_singleton_method(rb_cBBS, "clock", brb_clock, 0);
+        rb_define_singleton_method(rb_cBBS, "getch", brb_getch, 0);
+        rb_define_singleton_method(rb_cBBS, "kbhit", brb_kbhit, 1);
 
         // Set safe level to 2
         // We cannot have protection if the safe level < 2
