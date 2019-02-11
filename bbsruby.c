@@ -436,7 +436,7 @@ int ruby_script_range_detect(char **pStart, char **pEnd)
     tStart = cStart;
     VALUE hashTOC = rb_hash_new();
     int TOCfound = 0;
-    // In this implement, we only allowd TOC be put BEFORE the actual script code
+    // In this implement, we only allow TOC to be put BEFORE the actual script code
     while (tStart < cEnd)
     {
         if (tStart[0] == '#' && tStart[1] == '#' && tStart[2] == '#')
@@ -519,7 +519,7 @@ void run_ruby(fpath)
     for (sig=0; sig<31; sig++)
         signal(sig, sig_handler);
 
-    // Initalize Ruby interpreter first.
+    // Initialize Ruby interpreter first.
     if (!ruby_inited)
     {
         RUBY_INIT_STACK;
@@ -556,7 +556,7 @@ void run_ruby(fpath)
         rb_define_singleton_method(rb_cBBS, "kbhit", bbs_kbhit, 1);
 
         // Set safe level to 2
-        // We cannot have protection if the safe level > 2
+        // We cannot have protection if the safe level < 2
         rb_set_safe_level(2);
 
         // Hook Ruby
@@ -608,7 +608,7 @@ void run_ruby(fpath)
     // sprintf(evalBuf, "begin\n%s\nend", cpBuf);
     out_footer("", "按任意鍵開始執行");
 
-    //Before execution, preapre keyboard buffer
+    //Before execution, prepare keyboard buffer
     //KB_QUEUE = rb_ary_new();
     NODE* root = rb_compile_string("BBSRuby", rb_str_new2(cpBuf), 1);
     error = ruby_exec_node(root, "BBSRuby");
