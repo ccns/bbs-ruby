@@ -690,6 +690,9 @@ void run_ruby(
     VALUE eval_args[] = {rb_str_new_cstr(cpBuf), rb_str_new_cstr("BBSRuby"), INT2FIX(lineshift + 1)};
     free(cpBuf);
     // free(evalBuf);
+
+    clear();
+
     rb_protect(bbsruby_eval_code, (VALUE)eval_args, &error);
 
     if (error == 0 || ABORT_BBSRUBY)
