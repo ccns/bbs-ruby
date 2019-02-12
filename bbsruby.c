@@ -199,7 +199,7 @@ VALUE brb_move(VALUE self, VALUE y, VALUE x) { move(NUM2INT(y), NUM2INT(x)); ret
 VALUE brb_moverel(VALUE self, VALUE dy, VALUE dx) {
     int cur_row, cur_col;
     getyx(&cur_row, &cur_col);
-    move(cur_row + dy, cur_col + dx);
+    move(cur_row + NUM2INT(dy), cur_col + NUM2INT(dx));
     return Qnil;
 }
 
