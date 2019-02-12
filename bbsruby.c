@@ -491,7 +491,7 @@ int ruby_script_range_detect(char **pStart, char **pEnd, int *lineshift)
             for (i=0; i<BBSRUBY_TOC_HEADERS; i++)
             {
                 int lenBuf = strlen(TOCs_HEADER[i]);
-                if (strncmp(tStart, TOCs_HEADER[i], lenBuf) == 0)
+                if (strncasecmp(tStart, TOCs_HEADER[i], lenBuf) == 0)
                 {
                     tStart+=lenBuf;
                     while (*tStart == ' ') tStart++;
