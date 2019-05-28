@@ -1,3 +1,5 @@
+原文作者：**[@itsZero](https://github.com/itszero)**
+
 #labels Featured
    BBSRuby 版本 v0.2, API Interface: v0.111
 
