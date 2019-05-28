@@ -94,7 +94,7 @@ _`bbs.getmaxyx()`_          |傳回目前螢幕大小 `(my,mx)`, 實際可移動
 ~~`bbs.setattr(c1,c2,...)`~~  |同 `color()`
 　|　請使用`color`，未來視情況決定是否支援。
 　|
-`bbs.ANSI_COLOR(c1,...)`  |傳回 ANSI 屬性字串 (不馬上變屬性，要 `outs` 才會變)
+**`bbs.ansi_color(c1,...)`**  |傳回 ANSI 屬性字串 (不馬上變屬性，要 `outs` 才會變)
 `bbs.ANSI_RESET`          |傳回 `*[m` 字串
 `bbs.ESC`                 |傳回 ANSI 的 `*`
 
