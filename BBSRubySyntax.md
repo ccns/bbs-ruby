@@ -1,6 +1,6 @@
 原文作者：**[@itsZero](https://github.com/itszero)**
 
-BBSRuby 版本 v0.2, API Interface: v0.111
+BBSRuby 版本 v0.3, API Interface: v0.111
 
 Source Code下載：http://orez.us/~zero/BBSRuby.c
 
