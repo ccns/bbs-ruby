@@ -1,8 +1,8 @@
 # bbs-ruby
 
-Run Ruby code on Maple-itoc BBS with Sandbox.
+An environment for running Ruby code on MapleBBS/PttBBS with `$SAFE` level protection.
 
-Note: Really old code. I'm not going to maintain it, use it at your own risk.
+Ruby 1.9 - 2.2 are supported; using Ruby 2.2 is recommended.
 
 License: MIT
-Author: Zero Cho
+Original Author: Zero Cho
