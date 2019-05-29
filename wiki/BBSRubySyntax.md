@@ -1,6 +1,6 @@
 原文作者：**[@itsZero](https://github.com/itszero)**
 
-BBSRuby 版本 v0.3, API Interface: v0.111
+BBSRuby 版本 v0.3-DlPatch-1, API Interface: v0.111
 
 Source Code下載：http://orez.us/~zero/BBSRuby.c
 
@@ -14,10 +14,7 @@ Source Code下載：http://orez.us/~zero/BBSRuby.c
 
 ## 已知問題
 
-1. Hash.to_s() 不明原因出現 parameter error. @@
-
-2. Ruby interpreter 有時候啟動時會顯示 parse 錯誤，可是重新再進入一次
-卻又可以正常執行。
+1. Ruby 全域變數／物件不會重設
 
 ## 修改記錄
 
@@ -26,6 +23,43 @@ v0.2
 
 v0.3
 1. 修正getch()對於特殊按鍵沒反應的問題
+
+v0.3-DlPatch-1
+* API 變更
+    1. 重新定義 `getyx()`/`getmaxyx()` 結果的 `y` 為 row，`x` 為 column
+        * 避免與其他 BBS 系統的定義衝突
+        * 可以透過 `bbsruby.c` 開頭的環境設定恢復成 `x` 為 row，`y` 為 column 的定義
+        * 建議改用如 `r, c = getyx().values` 的方式讀取結果
+* 問題修正
+    1. 修正 memory leak 以及其他記憶體存取問題
+        1. 修正 Ruby interpreter 會隨機顯示 parse 錯誤的問題
+    2. 修正 BBS-Ruby 執行失敗會造成 segmentation fault 的問題
+    3. 修正執行 BBS-Ruby 會造成所有的 signal handler 被取代的問題
+    4. 部分解決 Ruby 變數／物件不會重設的問題
+    5. 修正 `move()`/`moverel()` 的結果不正確的問題
+    6. 修正不接受說明文件中的 TOC 標籤格式的問題
+* 功能改進
+    1. 增加對 Ruby 2.0 ~ 2.2 的支援
+        * 由於安全上的問題，暫不支援 Ruby 2.3+
+        * 目前建議使用 Ruby 2.2 編譯
+    2. 現在 BBS-Ruby 可以在其他 Maple3 / PttBBS 上編譯了
+        * 可能需要自行調整 `bbsruby.c` 開頭的環境設定
+    3. 讓程式出錯時的錯誤訊息更為詳細
+    4. 現在 BBS-Ruby 在執行前會檢查版本
+    5. 讓程式行號與文章行號一致
+    6. 現在執行 BBS-Ruby 時會先清除螢幕
+    7. 放寬 TOC 標籤語法
+        1. TOC 標籤可以用 `##` 或 `###` 開頭
+        2. TOC 標籤可以包含空格，也接受大小寫混合
+        3. 可以用全小寫的 key 存取 TOC 標籤
+    8. 讓 `getdata()` 在支援的 BBS 上可以用 Ctrl-C 跳出
+* 其他
+    1. 重新排版程式碼，修正程式碼錯字及亂碼
+    2. 將程式碼改寫成符合 ISO C90/C99 標準
+    3. 修正程式碼中誤用函數／參數型別不符的問題
+    4. 不再load空白檔案 `empty.rb`；移除 `RubyFix.h`
+    5. 將 C API 函數名稱改為以 `brb_` 開頭
+    6. 其他程式碼重構／細節修正
 
 ## 如何撰寫
 
