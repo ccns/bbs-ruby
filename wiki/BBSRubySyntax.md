@@ -1,6 +1,6 @@
 原文作者：**[@itsZero](https://github.com/itszero)**
 
-BBSRuby 版本 v0.3-DlPatch-1, API Interface: v0.111
+BBSRuby 版本 v0.3-DL-2, API Interface: v0.111
 
 Source Code下載：http://orez.us/~zero/BBSRuby.c
 
@@ -14,7 +14,7 @@ Source Code下載：http://orez.us/~zero/BBSRuby.c
 
 ## 已知問題
 
-1. Ruby 全域變數／物件不會重設
+1. 在 CRuby 下，Ruby 全域變數／物件不會重設
 
 ## 修改記錄
 
@@ -60,6 +60,26 @@ v0.3-DlPatch-1
     4. 不再load空白檔案 `empty.rb`；移除 `RubyFix.h`
     5. 將 C API 函數名稱改為以 `brb_` 開頭
     6. 其他程式碼重構／細節修正
+
+v0.3-DL-2
+* API 變更
+    1. 重新定義全域物件 `BBS` 為 Ruby module 而非 Ruby class
+* 問題修正
+    1. 修正執行 BBS-Ruby 時沒有真的清除螢幕的問題
+    2. 避免 BBS-Ruby 執行失敗時印出的錯誤訊息可能與背景同色而隱形的問題
+    3. 解決 Ruby 全域變數／物件不會重設的問題 (需要 mruby)
+* 功能改進
+    1. 增加對 mruby 的支援，解決 Ruby 全域變數／物件不會重設的問題
+    2. 使用白名單控制 Ruby gem library 的載入 (需要 mruby)
+* 程式改進
+    1. 強化程式碼的 const correctness
+    2. 讓程式碼符合 ISO C++98 標準，支援使用 C++ 編譯器編譯
+    3. 用型別安全的 `rb_funcallv()` 取代 `rb_funcall()` 的使用
+    4. 將接受任意數量參數的 C API 函數改寫成接受 C array 而非 Ruby array
+    5. 其他程式碼重構／細節修正
+* 其他
+    1. 不再設定 signal handler
+    2. 避免在 Ruby interpreter 初始化前印錯誤訊息
 
 ## 如何撰寫
 
@@ -156,14 +176,17 @@ _`bbs.getmaxyx()`_          |傳回目前螢幕大小 `(my,mx)`, 實際可移動
  ------------------------ | ----------------------------------------------
 ~~`bbs.time()`~~              |現在時間 (以數字表示)，精準度到秒 (處理速度較快)
 ~~`bbs.now()`~~               |同 `time()`
-　|　請使用 Ruby 內建的 `Time.now`
+　|　在 CRuby 下，請使用內建的 `Time.now`
+　|　在 mruby 下暫不支援
 　|
 ~~`bbs.ctime()`~~             |現在時間 (以字串表示)
-　|　請使用 Ruby 內建的 `Time.now.to_s`
+　|　在 CRuby 下，請使用內建的 `Time.now.to_s`
+　|　在 mruby 下暫不支援
 　|
 `bbs.clock()`             |高精準度的時間 (可到秒的小數點以下但速度較慢)
 ~~`bbs.sleep(sec)`~~          |停止執行 `sec` 秒 (可到小數點以下)
-　|　請使用 Ruby 內建的 `sleep`。
+　|　在 CRuby 下，請使用內建的 `sleep`
+　|　在 mruby 下暫不支援
 
 BBS 資訊 ||
  ------------------------ | ------------------
