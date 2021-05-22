@@ -6,8 +6,9 @@ Source Code下載：http://orez.us/~zero/BBSRuby.c
 
 ## 為什麼開發 BBSRuby?
 
-因為人家有 BBSLua （誤），其實只是想學學看怎麼把 Ruby interpreter 嵌入
-程式中。剛好人家有這麼棒的點子就拿來用囉XD 以前也曾想要寫 C# 的 BBS
+因為人家有 BBSLua （誤），其實只是想學學看怎麼把 Ruby interpreter 嵌入程式中。剛好人家有這麼棒的點子就拿來用囉XD
+
+以前也曾想要寫 C# 的 BBS\
 有一項功能就是用 C# 的 Runtime Compiler Service 弄 C# Script。
 
 不過... 該計畫... 被放棄了（小聲） 所以算是實現當時的願望吧 (?) XD
@@ -83,10 +84,11 @@ v0.3-DL-2
 
 ## 如何撰寫
 
-BBSRuby大致上與BBSLua相容，不過依然有一些變動。\
-如程式開頭結束皆使用`###BBSRuby`。 至於API的部份，BBSRuby將參考
-BBSLua API實做。以下將以BBSLua的API列表搭配說明/強調格式指示支援狀態。\
-原文作者為 piaip。
+BBSRuby大致上與BBSLua相容，不過依然有一些變動。如程式開頭結束皆使用`###BBSRuby`。
+
+至於API的部份，BBSRuby將參考BBSLua API實做。
+
+以下將以BBSLua的API列表搭配說明/強調格式指示支援狀態。原文作者為 piaip。
 
 支援狀況： ~~不支援~~ _與BBSLua有異_ 完全支援 **BBSRuby專屬**
 
