@@ -85,45 +85,48 @@ v0.3-DL-2
 
 BBSRuby大致上與BBSLua相容，不過依然有一些變動。\
 如程式開頭結束皆使用`###BBSRuby`。 至於API的部份，BBSRuby將參考
-BBSLua API實做。以下將以BBSLua的API列表搭配說明/顏色指示支援狀態。\
+BBSLua API實做。以下將以BBSLua的API列表搭配說明/強調格式指示支援狀態。\
 原文作者為 piaip。
 
-支援狀況： ~~不支援~~ _部份實做_ 完全支援 **BBSRuby專屬**
+支援狀況： ~~不支援~~ _與BBSLua有異_ 完全支援 **BBSRuby專屬**
 
 TOC標籤 ||
  -------------- | ------------------------------------------------
+　|　(以下亦可用 `###` 開頭；字的前後可包含空格，亦接受大小寫混合)
 `##Interface:`  |BBS-Ruby API 版本號碼 (可方便系統警示不相容的訊息)
 `##Title:`      |程式名稱
 `##Notes:`      |程式說明
 `##Author:`     |作者資訊
 `##Version:`    |程式自訂的版號
 `##Date:`       |最後修改日期
+~~`##LatestRef:`~~  |最新版的位置 (格式為: `#AID Board 站名或任意字串/註解`)
+　|　暫未支援。
 
-請注意 BBSRuby 的輔助函式以 "BBS." 不是 "bbs."，TOC存取方式也不同。
+請注意 BBSRuby 的輔助函式要以 `BBS.` 而不是 `bbs.` 來存取，TOC存取方式也不同。
+
+Store API 暫未實作，但未來支援時，其函式也要以 `STORE.` 而不是 `store.` 來存取。
 
 輸出 ||
  ------------------------ | ---------------------------
 ~~`bbs.addstr(str, ...)`~~    |畫字到目前位置
 　|　目前請使用`outs`。視情況考慮是否 alias `outs` 過來。
-　|
 `bbs.outs(str, ...)`      |畫字到目前位置 (同 `addstr`)
 `bbs.title(str)`          |移至左上角繪製標題
 `bbs.print(str, ...)`     |印完所印字串後再加上一個換行
 ~~`print(str, ...)`~~         |同 `bbs.print`
-　|　不支援STDOUT輸出。請使用`bbs.outs` / `bbs.print`。
-　|
+　|　暫未 alias 為 `bbs.print`。請使用`bbs.outs` / `bbs.print`。
 　|* 全系列畫字函式都可以接受 ANSI 指令
-　|* 注意: 輸出並不會立刻反應在畫面上，要等 `refresh()`
-　|　或其它輸入函式才會作全螢幕的更新。請見 `refresh()` 說明
-　|
+　|* 注意: 輸出並不會立刻反應在畫面上，要等 `refresh()` <br> 或其它輸入函式才會作全螢幕的更新。請見 `refresh()` 說明
+　|* 若已有鍵盤輸入則在輸入處理完前可能不會更新螢幕顯示
 **`bbs.vmsg(str)`**           |顯示訊息提示框
+　|　(`str` 暫不可省略) <br> (BBS-Lua 0.102 後與 `bbs.pause(msg)` 合併)
 
 移動 ||
  ------------------------ | -------------------------------------------------------
 _`bbs.getyx()`_             |傳回游標目前位置 `(y, x)`， `y`/`x` 由 `(0,0)`表左上角
-　|　會以 `{"y"=>y, "x"=>x}` 的形式傳回
+　|　(會以 `{"y"=>y, "x"=>x}` 的形式傳回)
 _`bbs.getmaxyx()`_          |傳回目前螢幕大小 `(my,mx)`, 實際可移動範圍到 `(my-1,mx-1)`
-　|　會以 `{"y"=>y, "x"=>x}` 的形式傳回
+　|　(會以 `{"y"=>y, "x"=>x}` 的形式傳回)
 `bbs.move(y,x)`           |移動到 `(y,x)` (也就是 ANSI 的 `*[x;yH`)
 `bbs.moverel(dy,dx)`      |移動到游標目前位置加上 `(dy,dx)`
 
@@ -135,69 +138,117 @@ _`bbs.getmaxyx()`_          |傳回目前螢幕大小 `(my,mx)`, 實際可移動
 
 2D繪圖 ||
  -------------------------- | -------------------------------------------------------------------------
-~~`bbs.box(rows,cols,title)`~~  |以目前游標位置為起點，用目前色彩屬性繪製一個高度 `rows` 寬度 `cols` 的視窗。
+~~`bbs.rect(r,c,title)`~~       |以目前游標位置為起點，用目前色彩屬性繪製一個高度 `r` (rows) 寬度 `c` (cols) 的視窗。
 　|　若有指定 `title` (可省略) 則會置中輸出字串
+　|　暫未支援。
 
 更新畫面 ||
  ----------------------- | ----------------------------------------------------------
 `bbs.refresh()`          |呼叫此命令時才會真的更新畫面
-　|　(呼叫輸入等待指令如 `getch`/`getstr`/`pause`/`kbhit`/`sleep`/`vmsg`時也會自動更新)
+　|　(呼叫輸入等待指令如 `getch`/`getstr`/`pause`/`kbhit`/`sleep`時也會自動更新)
 
-屬性 ||
+顏色、屬性與 ANSI 控制碼 ||
  ------------------------ | -------------------------------------
-`bbs.color(c1,c2,...)`    |切換 ANSI 屬性 (也就是 `*[c1;c2;....m`)
-　|　不指定參數時 `bbs.color() = *[m` (重設屬性)
+`bbs.color(c1,c2,...)`    |直接切換 ANSI 屬性 (也就是 `*[c1;c2;....m`，不用再 `bbs.outs()`)
+　|　不指定參數時 `bbs.color() = bbs.outs("*[m")` (重設屬性)
 ~~`bbs.setattr(c1,c2,...)`~~  |同 `color()`
 　|　請使用`color`，未來視情況決定是否支援。
-　|
-**`bbs.ansi_color(c1,...)`**  |傳回 ANSI 屬性字串 (不馬上變屬性，要 `outs` 才會變)
-`bbs.ANSI_RESET`          |傳回 `*[m` 字串
-`bbs.ESC`                 |傳回 ANSI 的 `*`
+　|　(在 BBS-Lua 中，此函式實際名稱為 `bbs.attrset`)
+`bbs.ansi_color(c1,...)`  |傳回 ANSI 屬性字串 (不馬上變屬性，要配合 `outs` 才會變)
+`bbs.ANSI_RESET`          |傳回 `"*[m"` 字串
+`bbs.ESC`                 |傳回 ANSI 的 Escape (`*`: ASCII 27, `0x1b`)
+~~`bbs.strip_ansi(s)`~~       |傳回無 ANSI 碼的 `s` 字串
+　|　暫未支援。
 
 輸入 ||
  ------------------------ | ---------------------------------------------------
-`bbs.getch()`             |輸入單鍵
-　|　特殊按鍵為大寫名: `UP` `DOWN` `LEFT` `RIGHT`
-　|　`ENTER` `BS` `TAB`   `HOME` `END` `INS` `DEL` `PGUP` `PGDN` `F1` ... `F12`
-　|　另外與 Ctrl 合按的複合鍵會以 `^X` 的形式出現。
-　|
-`bbs.getdata(n,echo)`     |畫 n 個字元的輸入框並輸入字串
-　|　echo (可省略) = 0 時只輸入不畫字 (可作密碼輸入)
-~~`bbs.getstr(n,echo)`~~      |同 `getdata`
+_`bbs.getch()`_             |輸入單鍵 (會等到有輸入為止)
+　|　特殊按鍵為大寫名: `UP` `DOWN` `LEFT` `RIGHT` <br> `ENTER` `BS` `TAB`   `HOME` `END` `INS` `DEL` `PGUP` `PGDN` `F1` ... `F12` <br> 另外與 Ctrl 合按的複合鍵會以 `^X` 的形式出現。
+　|　注意: 某些連線程式常會為「偵測全形字」多送按鍵 <br> 會導致收方向鍵時重複 2 次按鍵 <br> 要避免這個問題的解決方法是呼叫 `getch()` 前確認游標位置不在雙位元字的第一個 Byte 上面 (Leading Byte)。 <br> 另外若游標位置為非雙位元字，前面那個字也不能是雙位元。 <br> 記得更新前把游標擺在連續的非雙位元字或是雙位元字的第二個 byte 上面。 <br> 另外的方法就是關閉連線軟體端的偵測，改回讓伺服器端偵測才是王道
+　|  (`BS` 改為 `BKSP`；`F1` ... `F12` 暫未支援)
+_`bbs.getdata(n,echo,str)`_ |畫 `n` 個字元的輸入框並輸入字串
+　|　`echo` (可省略) = 0 時只輸入不畫字 (可作密碼輸入)
+　|　`str` (可省略) 為預設已輸入字串
+　|　(暫未支援 `str`)
+~~`bbs.getstr(n,echo,str)`~~  |同 `getdata`
 　|　請使用 `bbs.getdata`。
-　|
-`bbs.pause(msg)`          |在底部畫暫停訊息並等輸入單鍵 (傳回值同 `getch()`)
-　|
-`bbs.kbhit(wait)`         |傳回使用者是否有按鍵 (若無輸入則會等待最多 `wait` 秒)
+_`bbs.pause(msg)`_          |在底部畫暫停訊息並等輸入單鍵 (傳回值同 `getch()`)
+　|　(`msg` 暫不可省略)
+
+輸入緩衝區控制 ||
+ ------------------------ | ---------------------------------------------------
+　|　注意所有緩衝區控制指令等待時間都可能會有最小值 <br> 此最小值會因站台設定而不同
+_`bbs.kbhit(wait)`_         |傳回使用者是否有按鍵 (若無輸入則會等待最多 `wait` 秒)
+　|　`wait` 可省略
+　|　(`wait` 暫不可省略)
 ~~`bbs.kbreset()`~~           |清空輸入緩衝區 (吃掉所有已輸入的鍵)
-　|　因為BBS I/O核心的關係暫時不支援。
+　|　暫未支援。
+~~`bbs.kball(sec)`~~          |等待 `sec`(可省略) 秒，並傳回所有已輸入的鍵
+　|　(可用 `{bbs.kball()}` 轉換成表格以供處理)
+　|　適合 framerate 固定，又會同時輸入多個鍵的程式使用
+　|　範例: <br> `a = {bbs.kball(0.5)}; -- 處理所有鍵` <br> `for i=1,#a do ... a[i] ... end` <br> `b = bbs.kball(0.5);   -- 只處理第一個鍵` <br> `if bbs.kball(0.5) then ... end -- 只判斷有無按鍵`
+　|　暫未支援。
 
 時間 ||
  ------------------------ | ----------------------------------------------
-~~`bbs.time()`~~              |現在時間 (以數字表示)，精準度到秒 (處理速度較快)
+~~`bbs.time()`~~              |現在時間 (以數字表示)，精準度到秒 (呼叫處理速度較快)
 ~~`bbs.now()`~~               |同 `time()`
 　|　在 CRuby 下，請使用內建的 `Time.now`
-　|　在 mruby 下暫不支援
-　|
+　|　在 mruby 下暫未支援
 ~~`bbs.ctime()`~~             |現在時間 (以字串表示)
 　|　在 CRuby 下，請使用內建的 `Time.now.to_s`
-　|　在 mruby 下暫不支援
-　|
-`bbs.clock()`             |高精準度的時間 (可到秒的小數點以下但速度較慢)
+　|　在 mruby 下暫未支援
+`bbs.clock()`             |高精準度的時間 (可到秒的小數點以下但呼叫處理速度較慢)
 ~~`bbs.sleep(sec)`~~          |停止執行 `sec` 秒 (可到小數點以下)
 　|　在 CRuby 下，請使用內建的 `sleep`
-　|　在 mruby 下暫不支援
+　|　在 mruby 下暫未支援
 
 BBS 資訊 ||
  ------------------------ | ------------------
-`bbs.userid()`            |目前使用者的 id
+`bbs.userid`              |目前使用者的 id (0.119 後改為變數而非函式)
+　|　(Ruby 語法中，函式呼叫的 `()` 可省略；BBS-Ruby 內部實作仍為函式)
+~~`bbs.usernick`~~            |目前使用者的暱稱 (0.119+)
+　|　暫未支援。
 `bbs.sitename`            |BBS 站名
 `bbs.interface`           |BBSRuby API 版本號碼
 
 程式 TOC 資訊 ||
  ------------------------------- | ----------------------
+　|　(以下字串亦可用全小寫) <br> (注意語法與 BBS-Lua 有異)
+~~`bbs.toc["Interface"]`~~           |TOC 中的 `Interface:` 資訊
+　|　暫未支援。
 **`bbs.toc["Title"]`**               |TOC 中的 `Title:` 資訊
 **`bbs.toc["Notes"]`**               |TOC 中的 `Notes:` 資訊
 **`bbs.toc["Author"]`**              |TOC 中的 `Author:` 資訊
 **`bbs.toc["Version"]`**             |TOC 中的 `Version:` 資訊
 **`bbs.toc["Date"]`**                |TOC 中的 `Date:` 資訊
+~~`bbs.toc["LatestRef"]`~~           |TOC 中的 `LatestRef:` 資訊
+　|　暫未支援。
+
+位元操作 ||
+ ---------------- | ----------------------
+~~`bit.cast(a)`~~       |cast a to the internally-used integer type
+　|　請改寫為 `Integer(a)`
+~~`bit.bnot(a)`~~       |returns the one's complement of a
+　|　請使用內建的 `~` 運算子
+~~`bit.band(w1, ...)`~~ |returns the bitwise and of the w's
+　|　請使用內建的 `&` 運算子
+~~`bit.bor(w1, ...)`~~  |returns the bitwise or of the w's
+　|　請使用內建的 `\|` 運算子
+~~`bit.bxor(w1, ...)`~~ |returns the bitwise exclusive or of the w's
+　|　請使用內建的 `^` 運算子
+~~`bit.lshift(a, b)`~~  |returns a shifted left b places
+　|　請使用內建的 `<<` 運算子
+~~`bit.rshift(a, b)`~~  |returns a shifted logically right b places
+　|　請改寫為 `a >= 0 ? a >> b : (2 ** 32 + a) >> b`
+~~`bit.arshift(a, b)`~~ |returns a shifted arithmetically right b places
+　|　請使用內建的 `>>` 運算子
+
+資料儲存與讀取 (暫未實作) ||
+ -------------- | ----------------------
+~~`store.load(c)`~~   |回傳分類 `c` 內已儲存的資料 (若失敗或無資料則回傳 `nil`)
+~~`store.save(c,s)`~~ |儲存 `s` 的內容到分類 `c` (超過 limit 的部份不會存入，傳回值為 `true`/`false` 代表是否有成功存入。)
+~~`store.limit(c)`~~  |回傳分類 `c` 的大小限制
+~~`store.iolimit()`~~ |回傳資料存取 API (`load`/`save`) 的呼叫次數限制
+~~`store.USER`~~      |分類: 使用者目錄
+~~`store.GLOBAL`~~    |分類: 全站共享
