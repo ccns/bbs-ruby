@@ -1,4 +1,4 @@
 [submodule "wiki"]
 	path = wiki
-	url = git@github.com:IepIweidieng/bbs-ruby.git
+	url = ../bbs-ruby.git
 	branch = wiki
