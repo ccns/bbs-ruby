@@ -1,4 +1,0 @@
-[submodule "wiki"]
-	path = wiki
-	url = ../bbs-ruby.git
-	branch = wiki
